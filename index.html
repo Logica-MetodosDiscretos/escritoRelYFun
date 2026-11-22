@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escrito · Relaciones Binarias y Funciones Java</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f0ece2;
+  --panel: #fffdf6;
+  --panel-2: #f5f0e4;
+  --border: #d9cdb7;
+  --text: #2c2117;
+  --muted: #7a6e5a;
+  --amber: #9b2335;
+  --amber-dim: #9b233520;
+  --green: #2d6a4f;
+  --green-dim: #2d6a4f15;
+  --red: #9b2335;
+  --red-dim: #9b233518;
+  --mono: ui-monospace, "JetBrains Mono", "Fira Code", Consolas, "Courier New", monospace;
+  /* syntax */
+  --syn-kw: #7f0055;
+  --syn-ty: #7f0055;
+  --syn-st: #2a00ff;
+  --syn-nm: #125ea8;
+  --syn-cm: #3f7f5f;
+  --syn-fn: #0d6b67;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Lora', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.titlebar {
+  background: #e4ddd0;
+  border-bottom: 2px solid var(--border);
+  width: 100%;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 100;
+}
+.titlebar .course { font-weight: 600; font-style: normal; color: var(--text); }
+
+/* ── INICIO ── */
+#start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 100px 20px 60px;
+  width: 100%;
+  max-width: 600px;
+  gap: 20px;
+}
+#start-screen h1 {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.3;
+  border-bottom: 2px solid var(--amber);
+  padding-bottom: 12px;
+  text-align: center;
+  width: 100%;
+}
+#start-screen .subtitle { color: var(--muted); font-style: italic; font-size: 14px; text-align: center; }
+.info-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 24px;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.9;
+}
+.info-box ul { padding-left: 20px; }
+.info-box strong { color: var(--amber); }
+.form-group { width: 100%; }
+.form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+.form-group input {
+  width: 100%; padding: 11px 15px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--panel); color: var(--text);
+  font-family: 'Lora', Georgia, serif; font-size: 15px;
+}
+.form-group input:focus { outline: none; border-color: var(--amber); }
+.btn-begin {
+  background: var(--amber); color: #fffdf6;
+  font-family: 'Lora', Georgia, serif;
+  border: none; padding: 13px 38px;
+  border-radius: 8px; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: opacity .2s;
+}
+.btn-begin:hover { opacity: .88; }
+.btn-begin:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── EXAMEN ── */
+#exam-screen { display: none; width: 100%; max-width: 760px; padding: 100px 20px 60px; }
+.student-bar {
+  position: fixed; top: 48px; left: 0; right: 0;
+  background: var(--panel-2); border-bottom: 1px solid var(--border);
+  padding: 7px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: var(--muted); z-index: 90;
+}
+.student-bar .name { font-weight: 600; color: var(--text); }
+.progress-bar-wrap { flex: 1; margin: 0 18px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: var(--amber); border-radius: 3px; transition: width .4s ease; }
+
+/* ── SECCIÓN ── */
+.section-header {
+  margin: 32px 0 14px;
+  padding: 11px 16px;
+  background: var(--panel);
+  border-left: 4px solid var(--amber);
+  border-radius: 0 8px 8px 0;
+}
+.section-header h2 { font-size: 16px; font-weight: 600; }
+.section-header p { font-size: 13px; color: var(--muted); margin-top: 3px; font-style: italic; }
+.section-points { font-size: 11px; font-weight: 600; color: var(--amber); text-transform: uppercase; letter-spacing: 0.8px; }
+
+/* ── PREGUNTA ── */
+.question-block {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 14px;
+}
+.question-num { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 7px; }
+.question-text { font-size: 14.5px; line-height: 1.65; margin-bottom: 13px; }
+.math { font-style: italic; }
+
+/* Código Java */
+pre.jcode {
+  margin: 10px 0 13px;
+  background: #fafaf8;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.kw { color: var(--syn-kw); font-weight: 600; }
+.ty { color: var(--syn-ty); font-weight: 600; }
+.st { color: var(--syn-st); }
+.nm { color: var(--syn-nm); }
+.cm { color: var(--syn-cm); font-style: italic; }
+.fn { color: var(--syn-fn); }
+
+/* Opciones radio */
+.options-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.opt-label {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 13px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  cursor: pointer; font-size: 14px; line-height: 1.5;
+  background: var(--bg); transition: border-color .2s, background .2s;
+  font-family: var(--mono); font-size: 13px;
+}
+.opt-label.prose { font-family: 'Lora', Georgia, serif; font-size: 14px; }
+.opt-label:hover { border-color: var(--amber); background: var(--panel); }
+.opt-label input[type=radio] { margin-top: 3px; accent-color: var(--amber); flex-shrink: 0; }
+.opt-label.correct { border-color: var(--green); background: var(--green-dim); }
+.opt-label.wrong   { border-color: var(--red);   background: var(--red-dim); }
+.opt-label.correct::after { content: ' ✓'; font-weight: 600; color: var(--green); }
+.opt-label.wrong::after   { content: ' ✗'; font-weight: 600; color: var(--red); }
+
+/* Opciones checkbox */
+.check-label {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 13px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  cursor: pointer; font-size: 13px; line-height: 1.5;
+  background: var(--bg); font-family: var(--mono);
+}
+.check-label:hover { border-color: var(--amber); background: var(--panel); }
+.check-label input[type=checkbox] { margin-top: 3px; accent-color: var(--amber); flex-shrink: 0; }
+.check-label.correct { border-color: var(--green); background: var(--green-dim); }
+.check-label.wrong   { border-color: var(--red);   background: var(--red-dim); }
+.check-label.missed  { border-color: var(--green); background: var(--green-dim); opacity: .65; }
+
+/* V/F */
+.vf-wrap { display: flex; gap: 10px; }
+.vf-btn {
+  font-family: 'Lora', Georgia, serif;
+  padding: 9px 28px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--text);
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: border-color .2s, background .2s;
+}
+.vf-btn:hover { border-color: var(--amber); }
+.vf-btn.selected { border-color: var(--amber); background: var(--amber-dim); }
+.vf-btn.correct  { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+.vf-btn.wrong    { border-color: var(--red);   background: var(--red-dim);   color: var(--red); }
+
+/* Feedback */
+.q-feedback { display: none; margin-top: 11px; padding: 10px 13px; border-radius: 8px; font-size: 13px; line-height: 1.6; }
+.q-feedback.show { display: block; }
+.q-feedback.ok { background: var(--green-dim); border-left: 3px solid var(--green); color: #1a4532; }
+.q-feedback.ko { background: var(--red-dim);   border-left: 3px solid var(--red);   color: #6b1a26; }
+.q-feedback code { font-family: var(--mono); font-size: 12px; background: rgba(0,0,0,.07); border-radius: 3px; padding: 1px 4px; }
+
+/* Entregar */
+.submit-wrap { text-align: center; margin: 36px 0 20px; }
+.btn-submit {
+  background: var(--amber); color: #fffdf6;
+  font-family: 'Lora', Georgia, serif;
+  border: none; padding: 13px 48px;
+  border-radius: 8px; font-size: 17px; font-weight: 600;
+  cursor: pointer; transition: opacity .2s;
+}
+.btn-submit:hover { opacity: .88; }
+
+/* ── RESULTADO ── */
+#result-screen { display: none; width: 100%; max-width: 700px; padding: 100px 20px 60px; text-align: center; }
+.score-circle {
+  width: 130px; height: 130px; border-radius: 50%;
+  border: 4px solid var(--amber); background: var(--panel);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  margin: 0 auto 22px; gap: 2px;
+}
+.score-circle .score-num { font-size: 34px; font-weight: 600; color: var(--amber); }
+.score-circle .score-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .7px; }
+#result-screen h2 { font-size: 21px; font-weight: 600; margin-bottom: 7px; }
+#result-screen .result-sub { font-size: 14px; color: var(--muted); font-style: italic; margin-bottom: 26px; }
+.result-breakdown { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; text-align: left; margin-bottom: 22px; }
+.result-breakdown table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.result-breakdown th { background: var(--panel-2); padding: 9px 14px; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); border-bottom: 1px solid var(--border); }
+.result-breakdown td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+.result-breakdown tr:last-child td { border-bottom: none; }
+.tag-ok { color: var(--green); font-weight: 600; }
+.tag-ko { color: var(--red);   font-weight: 600; }
+.btn-review { background: transparent; border: 1.5px solid var(--amber); color: var(--amber); font-family: 'Lora', Georgia, serif; padding: 11px 34px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.btn-review:hover { background: var(--amber); color: #fffdf6; }
+
+/* Fullscreen guard */
+#exit-warning { display: none; position: fixed; inset: 0; background: rgba(44,33,23,.85); z-index: 999; align-items: center; justify-content: center; flex-direction: column; gap: 18px; color: var(--panel); text-align: center; padding: 40px; }
+#exit-warning h2 { font-size: 22px; }
+#exit-warning p  { font-size: 14px; color: #d9cdb7; }
+#exit-warning button { background: var(--amber); color: #fffdf6; border: none; padding: 11px 30px; border-radius: 8px; font-family: 'Lora', Georgia, serif; font-size: 15px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div id="exit-warning">
+  <h2>⚠️ Saliste de pantalla completa</h2>
+  <p>El escrito se envía automáticamente al salir de pantalla completa.<br>Volvé a pantalla completa y luego usá el botón "Entregar escrito".</p>
+  <button onclick="returnFS()">Volver a pantalla completa</button>
+</div>
+
+<div class="titlebar">
+  <span class="course">Lógica y Métodos Discretos · 1.er BT</span>
+  <span>Contenidos 2.2 — Relaciones binarias y funciones Java</span>
+</div>
+
+<!-- ═══ INICIO ═══ -->
+<div id="start-screen">
+  <h1>Escrito: Relaciones Binarias<br>y Funciones en Java</h1>
+  <p class="subtitle">Lógica y Métodos Discretos · Prof. Elizabeth Izquierdo</p>
+  <div class="info-box">
+    <ul>
+      <li>⏱ <strong>Duración:</strong> 50 minutos</li>
+      <li>📋 <strong>Preguntas:</strong> 15 (V/F, opción múltiple, selección múltiple)</li>
+      <li>⭐ <strong>Puntaje total:</strong> 20 puntos</li>
+      <li>🔵 Sección 1 (P. 1–8): Producto cartesiano y relaciones binarias</li>
+      <li>🟤 Sección 2 (P. 9–15): Funciones Java con retorno</li>
+      <li>🖥 El escrito se abre en <strong>pantalla completa</strong>. No cerrés la ventana.</li>
+    </ul>
+  </div>
+  <div class="form-group">
+    <label>Nombre completo</label>
+    <input type="text" id="student-name" placeholder="Ej.: Ana García" autocomplete="off">
+  </div>
+  <div class="form-group">
+    <label>Grupo</label>
+    <input type="text" id="student-group" placeholder="Ej.: 1.er BT-A" autocomplete="off">
+  </div>
+  <button class="btn-begin" id="btn-begin" onclick="startExam()" disabled>Comenzar escrito →</button>
+</div>
+
+<!-- ═══ EXAMEN ═══ -->
+<div id="exam-screen">
+  <div class="student-bar">
+    <span class="name" id="bar-name">—</span>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
+    <span id="bar-progress">0 / 15</span>
+  </div>
+
+  <!-- ─── SECCIÓN 1: RELACIONES ─── -->
+  <div class="section-header">
+    <h2>Sección 1 · Producto cartesiano y relaciones binarias</h2>
+    <p>Pares ordenados, cardinalidad, relaciones por extensión y comprensión</p>
+    <span class="section-points">10 puntos · Preguntas 1–8</span>
+  </div>
+
+  <!-- P1 — 1 pt VF -->
+  <div class="question-block" id="qb-1">
+    <div class="question-num">Pregunta 1 · Verdadero o Falso · 1 punto</div>
+    <div class="question-text">
+      Sea <strong>A = {m, n}</strong> y <strong>B = {1, 2, 3}</strong>.<br>
+      El producto cartesiano A×B = {(m,1), (m,2), (m,3), (n,1), (n,2), (n,3)}.
+    </div>
+    <div class="vf-wrap">
+      <button class="vf-btn" data-q="1" data-v="V">Verdadero</button>
+      <button class="vf-btn" data-q="1" data-v="F">Falso</button>
+    </div>
+    <div class="q-feedback" id="fb-1"></div>
+  </div>
+
+  <!-- P2 — 1 pt radio -->
+  <div class="question-block" id="qb-2">
+    <div class="question-num">Pregunta 2 · Opción múltiple · 1 punto</div>
+    <div class="question-text">
+      Sea <strong>A = {x, y, z}</strong> y <strong>B = {1, 2}</strong>.<br>
+      ¿Cuántos pares ordenados tiene A × B?
+    </div>
+    <ul class="options-list">
+      <li><label class="opt-label prose"><input type="radio" name="q2" value="a"> 2</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q2" value="b"> 3</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q2" value="c"> 5</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q2" value="d"> 6</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-2"></div>
+  </div>
+
+  <!-- P3 — 1 pt VF -->
+  <div class="question-block" id="qb-3">
+    <div class="question-num">Pregunta 3 · Verdadero o Falso · 1 punto</div>
+    <div class="question-text">
+      Sea <strong>A = {1, 2, 3}</strong>.<br>
+      La relación <strong>R = {(1, 2), (2, 4), (3, 1)}</strong> está bien definida en A × A.
+    </div>
+    <div class="vf-wrap">
+      <button class="vf-btn" data-q="3" data-v="V">Verdadero</button>
+      <button class="vf-btn" data-q="3" data-v="F">Falso</button>
+    </div>
+    <div class="q-feedback" id="fb-3"></div>
+  </div>
+
+  <!-- P4 — 2 pts checkbox -->
+  <div class="question-block" id="qb-4">
+    <div class="question-num">Pregunta 4 · Selección múltiple · 2 puntos</div>
+    <div class="question-text">
+      Sea <strong>A = {1, 2, 3}</strong> y <strong>B = {2, 4}</strong>.<br>
+      Marcá <strong>todos</strong> los pares que pertenecen a A × B.
+    </div>
+    <ul class="options-list">
+      <li><label class="check-label"><input type="checkbox" name="q4" value="a"> (1, 2)</label></li>
+      <li><label class="check-label"><input type="checkbox" name="q4" value="b"> (2, 1)</label></li>
+      <li><label class="check-label"><input type="checkbox" name="q4" value="c"> (3, 4)</label></li>
+      <li><label class="check-label"><input type="checkbox" name="q4" value="d"> (4, 2)</label></li>
+      <li><label class="check-label"><input type="checkbox" name="q4" value="e"> (2, 4)</label></li>
+      <li><label class="check-label"><input type="checkbox" name="q4" value="f"> (1, 4)</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-4"></div>
+  </div>
+
+  <!-- P5 — 2 pts checkbox -->
+  <div class="question-block" id="qb-5">
+    <div class="question-num">Pregunta 5 · Selección múltiple · 2 puntos</div>
+    <div class="question-text">
+      Dado <strong>A = {a, b, c}</strong>, marcá <strong>todas</strong> las relaciones que están <strong>bien definidas</strong> sobre A × A.
+    </div>
+    <ul class="options-list">
+      <li><label class="check-label"><input type="checkbox" name="q5" value="a"> R = {(a, b), (b, c), (c, a)}</label></li>
+      <li><label class="check-label"><input type="checkbox" name="q5" value="b"> R = {(a, a), (b, b), (c, d)}</label></li>
+      <li><label class="check-label"><input type="checkbox" name="q5" value="c"> R = {(a, b), (a, c), (b, b)}</label></li>
+      <li><label class="check-label"><input type="checkbox" name="q5" value="d"> R = {(b, a), (c, b), (a, e)}</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-5"></div>
+  </div>
+
+  <!-- P6 — 1 pt radio -->
+  <div class="question-block" id="qb-6">
+    <div class="question-num">Pregunta 6 · Opción múltiple · 1 punto</div>
+    <div class="question-text">
+      Sea <strong>A = {1, 2, 3, 4}</strong>. Se define la relación<br>
+      <span class="math">R = { (x, y) / (x, y) ∈ A×A y x + y = 5 }</span><br>
+      ¿Cómo queda R escrita por extensión?
+    </div>
+    <ul class="options-list">
+      <li><label class="opt-label prose"><input type="radio" name="q6" value="a"> R = {(1, 4), (2, 3)}</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q6" value="b"> R = {(1, 4), (2, 3), (3, 2), (4, 1)}</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q6" value="c"> R = {(1, 4), (4, 1)}</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q6" value="d"> R = {(2, 3), (3, 2)}</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-6"></div>
+  </div>
+
+  <!-- P7 — 1 pt radio -->
+  <div class="question-block" id="qb-7">
+    <div class="question-num">Pregunta 7 · Opción múltiple · 1 punto</div>
+    <div class="question-text">
+      Sea <strong>A = {0, 1, 2, 3}</strong>.<br>
+      Se define <span class="math">R = { (x, y) / (x, y) ∈ A×A y x · y = 0 }</span><br>
+      ¿Cuál de estas opciones es <em>un par</em> que pertenece a R?
+    </div>
+    <ul class="options-list">
+      <li><label class="opt-label prose"><input type="radio" name="q7" value="a"> (2, 3)</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q7" value="b"> (1, 1)</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q7" value="c"> (0, 3)</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q7" value="d"> (2, 2)</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-7"></div>
+  </div>
+
+  <!-- P8 — 1 pt VF -->
+  <div class="question-block" id="qb-8">
+    <div class="question-num">Pregunta 8 · Verdadero o Falso · 1 punto</div>
+    <div class="question-text">
+      Sea <strong>A = {2, 4, 6}</strong>. Se define la relación<br>
+      <span class="math">R = { (x, y) / (x, y) ∈ A×A y x &lt; y }</span><br>
+      El par (4, 6) pertenece a R.
+    </div>
+    <div class="vf-wrap">
+      <button class="vf-btn" data-q="8" data-v="V">Verdadero</button>
+      <button class="vf-btn" data-q="8" data-v="F">Falso</button>
+    </div>
+    <div class="q-feedback" id="fb-8"></div>
+  </div>
+
+  <!-- ─── SECCIÓN 2: FUNCIONES JAVA ─── -->
+  <div class="section-header">
+    <h2>Sección 2 · Funciones Java con retorno</h2>
+    <p>Tipos de retorno, llamadas, paso por valor, completar código</p>
+    <span class="section-points">10 puntos · Preguntas 9–15</span>
+  </div>
+
+  <!-- P9 — 1 pt radio — predecir salida simple -->
+  <div class="question-block" id="qb-9">
+    <div class="question-num">Pregunta 9 · Opción múltiple · 1 punto</div>
+    <div class="question-text">¿Qué imprime en consola el siguiente programa?</div>
+    <pre class="jcode"><span class="kw">public static</span> <span class="ty">int</span> <span class="fn">triple</span>(<span class="ty">int</span> x) {
+    <span class="kw">return</span> x * <span class="nm">3</span>;
+}
+
+<span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+    System.out.println(<span class="fn">triple</span>(<span class="nm">4</span>));
+}</pre>
+    <ul class="options-list">
+      <li><label class="opt-label"><input type="radio" name="q9" value="a"> 4</label></li>
+      <li><label class="opt-label"><input type="radio" name="q9" value="b"> 3</label></li>
+      <li><label class="opt-label"><input type="radio" name="q9" value="c"> 12</label></li>
+      <li><label class="opt-label"><input type="radio" name="q9" value="d"> x * 3</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-9"></div>
+  </div>
+
+  <!-- P10 — 1 pt radio — predecir salida con operación -->
+  <div class="question-block" id="qb-10">
+    <div class="question-num">Pregunta 10 · Opción múltiple · 1 punto</div>
+    <div class="question-text">¿Qué imprime en consola el siguiente programa?</div>
+    <pre class="jcode"><span class="kw">public static</span> <span class="ty">int</span> <span class="fn">resto</span>(<span class="ty">int</span> a, <span class="ty">int</span> b) {
+    <span class="kw">return</span> a - b;
+}
+
+<span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+    <span class="ty">int</span> r = <span class="fn">resto</span>(<span class="nm">10</span>, <span class="nm">3</span>);
+    System.out.println(r + <span class="nm">1</span>);
+}</pre>
+    <ul class="options-list">
+      <li><label class="opt-label"><input type="radio" name="q10" value="a"> 7</label></li>
+      <li><label class="opt-label"><input type="radio" name="q10" value="b"> 8</label></li>
+      <li><label class="opt-label"><input type="radio" name="q10" value="c"> 101</label></li>
+      <li><label class="opt-label"><input type="radio" name="q10" value="d"> 4</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-10"></div>
+  </div>
+
+  <!-- P11 — 2 pts radio — predecir paso por valor -->
+  <div class="question-block" id="qb-11">
+    <div class="question-num">Pregunta 11 · Opción múltiple · 2 puntos</div>
+    <div class="question-text">¿Qué imprime en consola el siguiente programa?</div>
+    <pre class="jcode"><span class="kw">public static</span> <span class="ty">int</span> <span class="fn">reducir</span>(<span class="ty">int</span> n) {
+    n = n - <span class="nm">3</span>;
+    <span class="kw">return</span> n;
+}
+
+<span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+    <span class="ty">int</span> k = <span class="nm">9</span>;
+    <span class="ty">int</span> res = <span class="fn">reducir</span>(k);
+    System.out.println(k + <span class="st">" "</span> + res);
+}</pre>
+    <ul class="options-list">
+      <li><label class="opt-label"><input type="radio" name="q11" value="a"> 6 6</label></li>
+      <li><label class="opt-label"><input type="radio" name="q11" value="b"> 9 6</label></li>
+      <li><label class="opt-label"><input type="radio" name="q11" value="c"> 6 9</label></li>
+      <li><label class="opt-label"><input type="radio" name="q11" value="d"> 9 9</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-11"></div>
+  </div>
+
+  <!-- P12 — 2 pts radio — completar código: ¿qué falta? -->
+  <div class="question-block" id="qb-12">
+    <div class="question-num">Pregunta 12 · Opción múltiple · 2 puntos</div>
+    <div class="question-text">
+      El método <code>mayor</code> debe devolver el mayor de dos números enteros.<br>
+      ¿Qué línea debe ir en lugar de <strong>___</strong> para que funcione correctamente?
+    </div>
+    <pre class="jcode"><span class="kw">public static</span> <span class="ty">int</span> <span class="fn">mayor</span>(<span class="ty">int</span> a, <span class="ty">int</span> b) {
+    <span class="kw">if</span> (a &gt; b) {
+        <span class="kw">return</span> a;
+    }
+    <span class="kw">return</span> ___;
+}</pre>
+    <ul class="options-list">
+      <li><label class="opt-label"><input type="radio" name="q12" value="a"> a</label></li>
+      <li><label class="opt-label"><input type="radio" name="q12" value="b"> b</label></li>
+      <li><label class="opt-label"><input type="radio" name="q12" value="c"> a + b</label></li>
+      <li><label class="opt-label"><input type="radio" name="q12" value="d"> true</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-12"></div>
+  </div>
+
+  <!-- P13 — 1 pt VF — tipo de retorno double vs int -->
+  <div class="question-block" id="qb-13">
+    <div class="question-num">Pregunta 13 · Verdadero o Falso · 1 punto</div>
+    <div class="question-text">
+      El siguiente método compila sin error:
+      <pre class="jcode"><span class="kw">public static</span> <span class="ty">int</span> <span class="fn">cociente</span>(<span class="ty">int</span> a, <span class="ty">int</span> b) {
+    <span class="kw">return</span> a / b;
+}</pre>
+    </div>
+    <div class="vf-wrap">
+      <button class="vf-btn" data-q="13" data-v="V">Verdadero</button>
+      <button class="vf-btn" data-q="13" data-v="F">Falso</button>
+    </div>
+    <div class="q-feedback" id="fb-13"></div>
+  </div>
+
+  <!-- P14 — 1 pt radio — completar: tipo de retorno correcto -->
+  <div class="question-block" id="qb-14">
+    <div class="question-num">Pregunta 14 · Opción múltiple · 1 punto</div>
+    <div class="question-text">
+      El método <code>esMayor</code> compara dos números y devuelve <code>true</code> si el primero es mayor.<br>
+      ¿Qué tipo de retorno debe declararse en lugar de <strong>___</strong>?
+      <pre class="jcode"><span class="kw">public static</span> ___ <span class="fn">esMayor</span>(<span class="ty">int</span> a, <span class="ty">int</span> b) {
+    <span class="kw">return</span> a &gt; b;
+}</pre>
+    </div>
+    <ul class="options-list">
+      <li><label class="opt-label"><input type="radio" name="q14" value="a"> int</label></li>
+      <li><label class="opt-label"><input type="radio" name="q14" value="b"> void</label></li>
+      <li><label class="opt-label"><input type="radio" name="q14" value="c"> boolean</label></li>
+      <li><label class="opt-label"><input type="radio" name="q14" value="d"> String</label></li>
+    </ul>
+    <div class="q-feedback" id="fb-14"></div>
+  </div>
+
+  <!-- P15 — 1 pt VF — método con return correcto -->
+  <div class="question-block" id="qb-15">
+    <div class="question-num">Pregunta 15 · Verdadero o Falso · 1 punto</div>
+    <div class="question-text">
+      El siguiente método está correctamente declarado y compila sin error:
+      <pre class="jcode"><span class="kw">public static</span> <span class="ty">double</span> <span class="fn">precio</span>(<span class="ty">int</span> cantidad, <span class="ty">double</span> valorUnitario) {
+    <span class="kw">return</span> cantidad * valorUnitario;
+}</pre>
+    </div>
+    <div class="vf-wrap">
+      <button class="vf-btn" data-q="15" data-v="V">Verdadero</button>
+      <button class="vf-btn" data-q="15" data-v="F">Falso</button>
+    </div>
+    <div class="q-feedback" id="fb-15"></div>
+  </div>
+
+  <div class="submit-wrap">
+    <button class="btn-submit" id="btn-submit" onclick="submitExam()">Entregar escrito →</button>
+  </div>
+</div>
+
+<!-- ═══ RESULTADO ═══ -->
+<div id="result-screen">
+  <div class="titlebar">
+    <span class="course">Lógica y Métodos Discretos · 1.er BT</span>
+    <span>Resultado del escrito</span>
+  </div>
+  <div class="score-circle">
+    <span class="score-num" id="final-score">—</span>
+    <span class="score-label">/ 20 pts</span>
+  </div>
+  <h2 id="result-title">—</h2>
+  <p class="result-sub" id="result-sub">—</p>
+  <div class="result-breakdown">
+    <table>
+      <thead><tr><th>#</th><th>Descripción</th><th>Obtenido</th><th>Total</th></tr></thead>
+      <tbody id="breakdown-body"></tbody>
+    </table>
+  </div>
+  <button class="btn-review" onclick="reviewExam()">Revisar respuestas →</button>
+</div>
+
+<script>
+/* ══ CORRECTAS ══ */
+const CORRECT = {
+  q1:  'V',
+  q2:  'd',    // 3×2=6
+  q3:  'F',    // (2,4): 4∉A
+  q4:  ['a','c','e','f'],  // ∈ {1,2,3}×{2,4}
+  q5:  ['a','c'],          // b: (c,d) con d∉A; d: (a,e) con e∉A
+  q6:  'b',    // (1,4),(2,3),(3,2),(4,1)
+  q7:  'c',    // 0·3=0
+  q8:  'V',    // 4<6 ✓
+  q9:  'c',    // triple(4)=12
+  q10: 'b',    // resto(10,3)=7 → 7+1=8
+  q11: 'b',    // paso por valor: k=9, res=6
+  q12: 'b',    // completar mayor: return b
+  q13: 'V',    // int/int → int, compila
+  q14: 'c',    // tipo de retorno boolean
+  q15: 'V',    // int * double → double, compila
+};
+
+const FEEDBACK = {
+  q1:  { ok:'Correcto. A×B forma todos los pares (a,b) con a∈A y b∈B, respetando ese orden. Con |A|=2 y |B|=3 se obtienen 6 pares.',
+         ko:'Recordá: A×B = {(a,b) / a∈A, b∈B}. El primer componente viene de A y el segundo de B.' },
+  q2:  { ok:'Correcto. |A×B| = |A|·|B| = 3·2 = 6.',
+         ko:'Usá la fórmula |A×B| = |A|·|B|. Con |A|=3 y |B|=2 el resultado es 6.' },
+  q3:  { ok:'Correcto. El par (2,4) tiene 4 como segundo componente, pero 4∉A={1,2,3}. Por eso R no está bien definida en A×A.',
+         ko:'Una relación en A×A está bien definida si todos sus pares pertenecen a A×A. Revisá (2,4): el 4 no está en A.' },
+  q4:  { ok:'Correcto. A×B = {1,2,3}×{2,4}. El primer componente debe pertenecer a {1,2,3} y el segundo a {2,4}.',
+         ko:'Verificá cada par: primer componente ∈ {1,2,3} y segundo componente ∈ {2,4}. (2,1): 1∉B → no. (4,2): 4∉A → no.' },
+  q5:  { ok:'Correcto. En la opción (b), (c,d) tiene d∉A. En la (d), (a,e) tiene e∉A. Las opciones (a) y (c) solo usan elementos de A.',
+         ko:'Revisá cada par: ¿ambos componentes pertenecen a A={a,b,c}? En (b) aparece d, y en (d) aparece e, que no están en A.' },
+  q6:  { ok:'Correcto. Los pares (x,y)∈A×A con x+y=5: (1,4),(2,3),(3,2),(4,1). Son cuatro pares distintos aunque compartan los mismos números.',
+         ko:'Probá todos los pares posibles de {1,2,3,4}×{1,2,3,4} donde x+y=5. Recordá que (1,4) y (4,1) son pares distintos.' },
+  q7:  { ok:'Correcto. 0·3=0 → (0,3)∈R. También pertenecen todos los pares donde al menos un componente es 0.',
+         ko:'La condición es x·y=0. Eso pasa cuando al menos un factor es 0. Revisá: 2·3=6≠0, 1·1=1≠0, 2·2=4≠0, pero 0·3=0.' },
+  q8:  { ok:'Correcto. (4,6): ambos pertenecen a A={2,4,6} y 4<6 se cumple → el par pertenece a R.',
+         ko:'Verificá dos cosas: (1) ¿ambos valores están en A? (2) ¿se cumple la condición x<y? Para (4,6): 4∈A ✓, 6∈A ✓, 4<6 ✓.' },
+  q9:  { ok:'Correcto. triple(4) devuelve 4×3=12, y println imprime ese valor.',
+         ko:'Seguí el flujo: se llama a triple con argumento 4; el parámetro x toma el valor 4; el método devuelve 4×3=12.' },
+  q10: { ok:'Correcto. resto(10,3) devuelve 10−3=7; luego r+1=7+1=8.',
+         ko:'Paso a paso: resto(10,3) → 10−3=7, ese valor se guarda en r. Luego se imprime r+1=8.' },
+  q11: { ok:'Correcto. En Java los int se pasan por valor: n dentro del método es una copia de k. Modificarla no cambia k en el main. k sigue siendo 9; res guarda el 6 devuelto.',
+         ko:'Los int se pasan por valor: el parámetro n dentro del método es una copia de k. Restarle 3 a n no afecta a k. El main imprime k=9 y res=6 (el valor devuelto por el método).' },
+  q12: { ok:'Correcto. Si a no es mayor que b, el mayor de los dos es b. El método debe devolver b en ese caso.',
+         ko:'Si a > b se devuelve a. Para el caso contrario (b ≥ a), el mayor es b. La línea que falta es return b.' },
+  q13: { ok:'Correcto. int/int en Java da siempre un int (división entera). El tipo de retorno declarado es int, así que no hay incompatibilidad → compila sin error.',
+         ko:'En Java, dividir dos int da un int (se descarta el decimal). El método declara retornar int, así que a/b (donde a y b son int) encaja perfectamente → compila.' },
+  q14: { ok:'Correcto. La expresión a > b produce true o false, es decir, un boolean. El tipo de retorno que corresponde es boolean.',
+         ko:'La expresión a > b es una comparación que produce true o false. Ese resultado es de tipo boolean, que es el tipo de retorno que debe declararse.' },
+  q15: { ok:'Correcto. cantidad es int y valorUnitario es double; multiplicarlos da un double, que coincide con el tipo de retorno declarado → compila sin error.',
+         ko:'int × double en Java produce un double. El método declara devolver double, así que el return es compatible → compila correctamente.' },
+};
+
+const LABELS = {
+  q1:'Producto cartesiano A×B — V/F',
+  q2:'Cardinal de A×B',
+  q3:'Relación bien definida — V/F (no)',
+  q4:'Pares que pertenecen a A×B',
+  q5:'Relaciones bien definidas (selección)',
+  q6:'Relación x+y=5 por extensión',
+  q7:'Par en relación x·y=0',
+  q8:'Par en relación x<y — V/F',
+  q9:'Predecir salida: triple(4)',
+  q10:'Predecir salida: resto y suma',
+  q11:'Predecir salida: paso por valor',
+  q12:'Completar código: método mayor',
+  q13:'Tipo de retorno int/int — V/F',
+  q14:'Completar firma: tipo de retorno boolean',
+  q15:'Firma con double — V/F',
+};
+
+const PTS = {q1:1,q2:1,q3:1,q4:2,q5:2,q6:1,q7:1,q8:1,q9:1,q10:1,q11:2,q12:2,q13:1,q14:1,q15:1};
+const VF_QS    = ['1','3','8','13','15'];
+const RADIO_QS = ['2','6','7','9','10','11','12','14'];
+const CHECK_QS = ['4','5'];
+const TOTAL_QS = 15;
+
+let submitted = false;
+const vfSelected = {};
+
+document.getElementById('student-name').addEventListener('input', chk);
+document.getElementById('student-group').addEventListener('input', chk);
+function chk(){
+  document.getElementById('btn-begin').disabled =
+    !document.getElementById('student-name').value.trim() ||
+    !document.getElementById('student-group').value.trim();
+}
+
+function startExam(){
+  const name  = document.getElementById('student-name').value.trim();
+  const group = document.getElementById('student-group').value.trim();
+  document.getElementById('bar-name').textContent = name + ' · ' + group;
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('exam-screen').style.display  = 'block';
+  window.scrollTo(0, 0);
+  const el = document.documentElement;
+  if(el.requestFullscreen) el.requestFullscreen();
+  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  trackProgress();
+  document.querySelectorAll('.vf-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(submitted) return;
+      const q = btn.dataset.q;
+      document.querySelectorAll(`.vf-btn[data-q="${q}"]`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      vfSelected[q] = btn.dataset.v;
+      updateProgress();
+    });
+  });
+}
+
+function returnFS(){
+  document.getElementById('exit-warning').style.display = 'none';
+  const el = document.documentElement;
+  if(el.requestFullscreen) el.requestFullscreen();
+  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+}
+document.addEventListener('fullscreenchange', () => {
+  if(!document.fullscreenElement && !submitted &&
+     document.getElementById('exam-screen').style.display === 'block'){
+    document.getElementById('exit-warning').style.display = 'flex';
+    setTimeout(() => { if(!submitted) submitExam(); }, 3000);
+  }
+});
+
+function trackProgress(){
+  document.querySelectorAll('input[type=radio], input[type=checkbox]')
+    .forEach(r => r.addEventListener('change', updateProgress));
+}
+function updateProgress(){
+  let done = 0;
+  VF_QS.forEach(q => { if(vfSelected[q]) done++; });
+  RADIO_QS.forEach(q => { if(document.querySelector(`input[name="q${q}"]:checked`)) done++; });
+  CHECK_QS.forEach(q => { if(document.querySelector(`input[name="q${q}"]:checked`)) done++; });
+  document.getElementById('bar-progress').textContent = done + ' / ' + TOTAL_QS;
+  document.getElementById('prog-fill').style.width = (done / TOTAL_QS * 100) + '%';
+}
+
+function submitExam(){
+  if(submitted) return;
+  submitted = true;
+  document.getElementById('exit-warning').style.display = 'none';
+
+  let totalScore = 0;
+  const results = [];
+
+  for(let i = 1; i <= TOTAL_QS; i++){
+    const qk = 'q' + i, maxPts = PTS[qk];
+    let ok = false, ptsEarned = 0;
+
+    if(VF_QS.includes(String(i))){
+      const user = vfSelected[String(i)] || '(sin respuesta)';
+      ok = user === CORRECT[qk];
+      ptsEarned = ok ? maxPts : 0;
+      document.querySelectorAll(`.vf-btn[data-q="${i}"]`).forEach(b => {
+        if(b.dataset.v === CORRECT[qk]) b.classList.add('correct');
+        if(b.dataset.v === user && !ok) b.classList.add('wrong');
+      });
+    }
+    else if(RADIO_QS.includes(String(i))){
+      const sel = document.querySelector(`input[name="q${i}"]:checked`);
+      const user = sel ? sel.value : '(sin respuesta)';
+      ok = user === CORRECT[qk];
+      ptsEarned = ok ? maxPts : 0;
+      document.querySelectorAll(`input[name="q${i}"]`).forEach(r => {
+        const lbl = r.closest('label');
+        if(!lbl) return;
+        if(r.value === CORRECT[qk]) lbl.classList.add('correct');
+        if(r.value === user && !ok) lbl.classList.add('wrong');
+        r.disabled = true;
+      });
+    }
+    else {
+      const correctSet = new Set(CORRECT[qk]);
+      const checked = [...document.querySelectorAll(`input[name="q${i}"]:checked`)].map(r => r.value);
+      const checkedSet = new Set(checked);
+      const allCorrect = correctSet.size === checkedSet.size && [...correctSet].every(v => checkedSet.has(v));
+      ptsEarned = allCorrect ? maxPts : 0;
+      ok = allCorrect;
+      document.querySelectorAll(`input[name="q${i}"]`).forEach(r => {
+        const lbl = r.closest('label');
+        const isCorrectOpt = correctSet.has(r.value);
+        const wasChecked   = checkedSet.has(r.value);
+        if(isCorrectOpt && wasChecked)  lbl.classList.add('correct');
+        if(!isCorrectOpt && wasChecked) lbl.classList.add('wrong');
+        if(isCorrectOpt && !wasChecked) lbl.classList.add('missed');
+        r.disabled = true;
+      });
+    }
+
+    totalScore += ptsEarned;
+    results.push({ q: i, label: LABELS[qk], pts: ptsEarned, max: maxPts, ok });
+    const fb = document.getElementById('fb-' + i);
+    fb.textContent = ok ? '✓ ' + FEEDBACK[qk].ok : '✗ ' + FEEDBACK[qk].ko;
+    fb.className = 'q-feedback show ' + (ok ? 'ok' : 'ko');
+  }
+
+  showResult(totalScore, results);
+}
+
+function showResult(score, results){
+  document.getElementById('exam-screen').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+  window.scrollTo(0, 0);
+  document.getElementById('final-score').textContent = score;
+  const pct = score / 20 * 100;
+  let title, sub;
+  if(pct >= 85)      { title = '¡Muy bien!';             sub = 'Dominás bien los dos temas del escrito.'; }
+  else if(pct >= 65) { title = 'Bien, seguí practicando'; sub = 'Los conceptos centrales están presentes. Revisá los feedbacks para ajustar los detalles.'; }
+  else if(pct >= 50) { title = 'En proceso';              sub = 'Repasá los temas donde tuviste errores usando los feedbacks de cada pregunta.'; }
+  else               { title = 'Necesitás repasar';        sub = 'Revisá el material de relaciones binarias y funciones Java antes del próximo escrito.'; }
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent   = sub;
+
+  const tbody = document.getElementById('breakdown-body');
+  tbody.innerHTML = '';
+  let totalMax = 0, totalGot = 0;
+  results.forEach(r => {
+    totalMax += r.max; totalGot += r.pts;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r.q}</td><td style="font-size:12px">${r.label}</td>
+      <td class="${r.ok ? 'tag-ok' : 'tag-ko'}">${r.pts}</td><td>${r.max}</td>`;
+    tbody.appendChild(tr);
+  });
+  const tr = document.createElement('tr');
+  tr.style.fontWeight = '600';
+  tr.innerHTML = `<td colspan="2" style="text-align:right;padding-right:14px">Total</td>
+    <td class="${totalGot >= 10 ? 'tag-ok' : 'tag-ko'}">${totalGot}</td><td>${totalMax}</td>`;
+  tbody.appendChild(tr);
+}
+
+function reviewExam(){
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('exam-screen').style.display   = 'block';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
