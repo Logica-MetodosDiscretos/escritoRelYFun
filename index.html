@@ -279,7 +279,7 @@ pre.jcode {
   <div class="info-box">
     <ul>
       <li>⏱ <strong>Duración:</strong> 50 minutos</li>
-      <li>📋 <strong>Preguntas:</strong> 15 (V/F, opción múltiple, selección múltiple)</li>
+      <li>📋 <strong>Preguntas:</strong> 15 (V/F, opción múltiple, selección múltiple, completar código)</li>
       <li>⭐ <strong>Puntaje total:</strong> 20 puntos</li>
       <li>🔵 Sección 1 (P. 1–8): Producto cartesiano y relaciones binarias</li>
       <li>🟤 Sección 2 (P. 9–15): Funciones Java con retorno</li>
@@ -547,21 +547,25 @@ pre.jcode {
     <div class="q-feedback" id="fb-13"></div>
   </div>
 
-  <!-- P14 — 1 pt radio — completar: tipo de retorno correcto -->
+  <!-- P14 — 1 pt radio — error de compilación -->
   <div class="question-block" id="qb-14">
     <div class="question-num">Pregunta 14 · Opción múltiple · 1 punto</div>
     <div class="question-text">
-      El método <code>esMayor</code> compara dos números y devuelve <code>true</code> si el primero es mayor.<br>
-      ¿Qué tipo de retorno debe declararse en lugar de <strong>___</strong>?
-      <pre class="jcode"><span class="kw">public static</span> ___ <span class="fn">esMayor</span>(<span class="ty">int</span> a, <span class="ty">int</span> b) {
-    <span class="kw">return</span> a &gt; b;
+      El siguiente código <strong>no compila</strong>. ¿Cuál es el motivo?
+      <pre class="jcode"><span class="kw">public static</span> <span class="ty">int</span> <span class="fn">cuadrado</span>(<span class="ty">int</span> n) {
+    System.out.println(n * n);
+}
+
+<span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+    <span class="ty">int</span> r = <span class="fn">cuadrado</span>(<span class="nm">5</span>);
+    System.out.println(r);
 }</pre>
     </div>
-    <ul class="options-list">
-      <li><label class="opt-label"><input type="radio" name="q14" value="a"> int</label></li>
-      <li><label class="opt-label"><input type="radio" name="q14" value="b"> void</label></li>
-      <li><label class="opt-label"><input type="radio" name="q14" value="c"> boolean</label></li>
-      <li><label class="opt-label"><input type="radio" name="q14" value="d"> String</label></li>
+    <ul class="options-list prose">
+      <li><label class="opt-label prose"><input type="radio" name="q14" value="a"> El método tiene el nombre incorrecto.</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q14" value="b"> <code>println</code> no puede usarse dentro de un método.</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q14" value="c"> El método declara devolver <code>int</code> pero no tiene <code>return</code>.</label></li>
+      <li><label class="opt-label prose"><input type="radio" name="q14" value="d"> No se puede guardar el resultado en una variable.</label></li>
     </ul>
     <div class="q-feedback" id="fb-14"></div>
   </div>
@@ -609,24 +613,12 @@ pre.jcode {
 </div>
 
 <script>
-/* ══ CORRECTAS ══ */
-const CORRECT = {
-  q1:  'V',
-  q2:  'd',    // 3×2=6
-  q3:  'F',    // (2,4): 4∉A
-  q4:  ['a','c','e','f'],  // ∈ {1,2,3}×{2,4}
-  q5:  ['a','c'],          // b: (c,d) con d∉A; d: (a,e) con e∉A
-  q6:  'b',    // (1,4),(2,3),(3,2),(4,1)
-  q7:  'c',    // 0·3=0
-  q8:  'V',    // 4<6 ✓
-  q9:  'c',    // triple(4)=12
-  q10: 'b',    // resto(10,3)=7 → 7+1=8
-  q11: 'b',    // paso por valor: k=9, res=6
-  q12: 'b',    // completar mayor: return b
-  q13: 'V',    // int/int → int, compila
-  q14: 'c',    // tipo de retorno boolean
-  q15: 'V',    // int * double → double, compila
-};
+/* ══ CORRECTAS (codificadas) ══ */
+// Las respuestas se decodifican solo al momento de corregir.
+const _K = "eyJxMSI6IlYiLCJxMiI6ImQiLCJxMyI6IkYiLCJxNCI6WyJhIiwiYyIsImUiLCJmIl0sInE1IjpbImEiLCJjIl0sInE2IjoiYiIsInE3IjoiYyIsInE4IjoiViIsInE5IjoiYyIsInExMCI6ImIiLCJxMTEiOiJiIiwicTEyIjoiYiIsInExMyI6IlYiLCJxMTQiOiJjIiwicTE1IjoiViJ9";
+function _getCorrect() {
+  try { return JSON.parse(atob(_K)); } catch(e) { return {}; }
+}
 
 const FEEDBACK = {
   q1:  { ok:'Correcto. A×B forma todos los pares (a,b) con a∈A y b∈B, respetando ese orden. Con |A|=2 y |B|=3 se obtienen 6 pares.',
@@ -651,12 +643,12 @@ const FEEDBACK = {
          ko:'Paso a paso: resto(10,3) → 10−3=7, ese valor se guarda en r. Luego se imprime r+1=8.' },
   q11: { ok:'Correcto. En Java los int se pasan por valor: n dentro del método es una copia de k. Modificarla no cambia k en el main. k sigue siendo 9; res guarda el 6 devuelto.',
          ko:'Los int se pasan por valor: el parámetro n dentro del método es una copia de k. Restarle 3 a n no afecta a k. El main imprime k=9 y res=6 (el valor devuelto por el método).' },
-  q12: { ok:'Correcto. Si a no es mayor que b, el mayor de los dos es b. El método debe devolver b en ese caso.',
-         ko:'Si a > b se devuelve a. Para el caso contrario (b ≥ a), el mayor es b. La línea que falta es return b.' },
+  q12: { ok:'Correcto. Si a no es mayor que b, el mayor de los dos es el otro parámetro. El método debe devolver ese valor en el else implícito.',
+         ko:'Si a > b se devuelve a. Para el caso contrario (b ≥ a), ¿cuál de los dos es el mayor? Ese es el valor que debe devolver el return final.' },
   q13: { ok:'Correcto. int/int en Java da siempre un int (división entera). El tipo de retorno declarado es int, así que no hay incompatibilidad → compila sin error.',
          ko:'En Java, dividir dos int da un int (se descarta el decimal). El método declara retornar int, así que a/b (donde a y b son int) encaja perfectamente → compila.' },
-  q14: { ok:'Correcto. La expresión a > b produce true o false, es decir, un boolean. El tipo de retorno que corresponde es boolean.',
-         ko:'La expresión a > b es una comparación que produce true o false. Ese resultado es de tipo boolean, que es el tipo de retorno que debe declararse.' },
+  q14: { ok:'Correcto. El método declara devolver int pero solo tiene un println — falta la instrucción return. Java exige que todo camino del método termine con un return del tipo prometido.',
+         ko:'El problema está en que el método declara int como tipo de retorno pero no tiene ninguna instrucción return. Usar println imprime el valor pero no lo devuelve; Java no compila sin el return.' },
   q15: { ok:'Correcto. cantidad es int y valorUnitario es double; multiplicarlos da un double, que coincide con el tipo de retorno declarado → compila sin error.',
          ko:'int × double en Java produce un double. El método declara devolver double, así que el return es compatible → compila correctamente.' },
 };
@@ -675,7 +667,7 @@ const LABELS = {
   q11:'Predecir salida: paso por valor',
   q12:'Completar código: método mayor',
   q13:'Tipo de retorno int/int — V/F',
-  q14:'Completar firma: tipo de retorno boolean',
+  q14:'Error de compilación: falta return',
   q15:'Firma con double — V/F',
 };
 
@@ -753,6 +745,7 @@ function submitExam(){
 
   let totalScore = 0;
   const results = [];
+  const CORRECT = _getCorrect();
 
   for(let i = 1; i <= TOTAL_QS; i++){
     const qk = 'q' + i, maxPts = PTS[qk];
